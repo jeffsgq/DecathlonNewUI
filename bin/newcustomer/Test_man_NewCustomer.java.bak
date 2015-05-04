@@ -1,0 +1,378 @@
+package newcustomer;
+
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
+import screenshot.Screenshot;
+
+
+public class Test_man_NewCustomer {
+	public static WebDriver driver;
+	
+		
+		//随机生成数字0-100
+	public static int getrandomnum(){
+			final long l = System.currentTimeMillis();
+			final int i = (int) (l%100);
+			return i;
+		}
+		//随机生成26个英文字母
+	public static char getrandomletter() {
+		char paramChar = (char) (Math.random() * 26 + 'A');
+		return paramChar;
+		}
+	
+
+	
+	// 打开网页，如果出现异常截图
+	public static void openurl(String url) throws Exception {
+		try {
+//			System.setProperty("webdriver.firefox.bin",
+//					"D:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe");
+			driver = new FirefoxDriver();
+			driver.manage().window().maximize(); // 窗口最大化
+			driver.get(url); // 打开网页
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);// 设置超时时间
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_OpenBrowser.png");
+			driver.quit();
+			throw new Exception();
+		}
+	}
+
+	// 在首页搜索框搜索，如果出现异常截图
+	public static void typesearchbar() throws Exception {
+		try {
+			driver.findElement(By.id("search")).clear();// 清除搜索框
+			driver.findElement(By.id("search")).sendKeys("跑步鞋");// 在搜索框输入“跑步鞋”
+			driver.findElement(By.id("btn-search")).click();// 点击搜索按钮
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_TypeSearchBar.png");
+			driver.quit();
+			throw new Exception();
+		}
+
+	}
+
+	// 按条件筛选，如果出现异常截图
+	public static void searchshoe() throws Exception {
+		try {
+			driver.findElement(By.xpath("//a[contains(text(),'跑步')]")).click();// 点击运动分类中的跑步
+			driver.findElement(By.xpath("//a[contains(text(),'男士')]")).click();// 点击性别分类中的男士
+			driver.findElement(By.xpath("//a[contains(text(),'鞋子')]")).click();// 点击产品类型分类中的鞋子
+			driver.findElement(By.id("price-from")).click();// 价格区间--从
+			driver.findElement(By.id("price-from")).clear();// 清除价格区间--从
+			driver.findElement(By.id("price-from")).sendKeys("0");// 价格区间--从的值
+			driver.findElement(By.id("price-to")).clear();// 价格区间--至
+			driver.findElement(By.id("price-to")).sendKeys("100");// 价格区间--至得值
+			driver.findElement(By.id("btn-range")).click();// 点击确定
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,
+					"NewCustomer_SearchShoe.png");
+			driver.quit();
+			throw new Exception();
+		}
+
+	}
+
+	// 选择男士跑步鞋，并跳转至新的窗口，如果出现异常截图
+	public static void selectshoe() throws Exception {
+		try {
+			driver.findElement(By.cssSelector("img[alt=\"EKIDEN ONE 男式健身跑步鞋\"]")).click();
+			String handle = driver.getWindowHandle(); // 跳转窗口
+			for (String handles : driver.getWindowHandles()) {
+				if (handles.equals(handle))
+					continue;
+				driver.switchTo().window(handles);
+			}
+			// 选择颜色，尺码
+			driver.findElement(By.id("value13694")).click(); // 选择颜色
+			driver.findElement(By.id("value13673")).click();// 选择尺码 42码
+			driver.findElement(By.cssSelector("button.button.btn-cart")).click();// 加入购物车
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_SelectShoe.png");
+			driver.quit();
+			throw new Exception();
+		}
+		Thread.sleep(3000);// 休眠3秒
+	}
+
+	//判断鞋子是否缺货
+		public static void isoutofstock_shoe() throws Exception
+			{
+				if(driver.findElement(By.xpath("//div[@id='messages_product_view']/ul[@class='messages']/li/ul/li/span")).getText().trim().equals("该产品目前缺货。"))
+				{
+				Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_outofstock_shoes.png");
+				System.out.println("shoe is out of stock");
+				driver.quit();
+				throw new Exception();
+				}
+		}
+	
+	
+	// 搜索T-shirt，如果出现异常截图
+	public static void searchtshirt() throws Exception {
+		try {
+			driver.findElement(By.id("search")).clear();// 清除搜索框的值
+			driver.findElement(By.id("search")).sendKeys("T-shirt");// 输入搜索框的值为“T-shirt”
+			driver.findElement(By.id("btn-search")).click();// 点击搜索
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_SearchTshirt.png");
+			driver.quit();
+			throw new Exception();
+		}
+
+	}
+
+	// 选择T-shirt，如果出现异常截图
+	public static void selecttshirt() throws Exception {
+		try {
+			String currentWindow = driver.getWindowHandle();// 获取当前窗口句柄
+			Set<String> handles1 = driver.getWindowHandles();// 获取所有窗口句柄
+			Iterator<String> it = handles1.iterator();
+			while (it.hasNext()) {
+				if (currentWindow == it.next()) {
+					continue;
+				}
+				WebDriver window = driver.switchTo().window(it.next());// 切换到新窗口
+				window.findElement(By.xpath("//img[@alt='户外运动 保暖 青少年T恤 QUECHUA T-SHIRT WARM JR 深灰色 14岁']")).click();
+				Thread.sleep(3000);// 休眠3秒
+			}
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_SelectTshirt.png");
+			driver.quit();
+			throw new Exception();
+		}
+
+	}
+
+	// 将T-shirt加入购物车，出现异常截图
+	public static void addintoshoppingcart() throws Exception {
+		try {
+			String handle1 = driver.getWindowHandle();
+			for (String handles : driver.getWindowHandles()) {
+				if (handles.equals(handle1))
+					continue;
+				driver.switchTo().window(handles);
+			}
+			driver.findElement(By.id("value13631")).click(); // 选择12岁
+			driver.findElement(By.cssSelector("button.button.btn-cart")).click();// 加入购物车
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_AddInToShippingCart.png");
+			driver.quit();
+			throw new Exception();
+		}
+	}
+
+	//判断T-shirt是否缺货
+			public static void isoutofstock_tshirt() throws Exception
+				{
+					if(driver.findElement(By.xpath("//div[@id='messages_product_view']/ul[@class='messages']/li/ul/li/span")).getText().trim().equals("该产品目前缺货。"))
+					{
+					Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_outofstock_tshirt.png");
+					System.out.println("T-shirt is out of stock");
+					driver.quit();
+					throw new Exception();
+					}
+			}
+	
+	// 进入购物车页面,修改购物车内容,出现异常截图
+	public static void editshoppingcart() throws Exception {
+		try {
+			Actions action = new Actions(driver);
+			action.moveToElement(driver.findElement(By.className("top-cart"))).perform();// 移动到购物车按钮上方
+			Thread.sleep(3000);// 休眠3秒
+			driver.findElement(By.id("topcart-checkout")).click();// 点击去购物车结算
+			driver.findElement(By.cssSelector("button.button.btn-increase")).click();// 增加鞋子数量到2
+			Thread.sleep(3000);
+			driver.findElement(By.xpath("(//button[@type='button'])[7]")).click();// 删除T-shirt
+			Thread.sleep(3000);// 休眠3秒
+			
+			// --------------------------应用优惠券前比较价格--------------------------//
+			String subtotalprice = driver.findElement(By.xpath("//table[@id='shopping-cart-totals-table']/tbody/tr[1]/td[2]/span")).getText();// 小计价格
+			System.out.println("subtotalprice is :" + subtotalprice);
+			String beforetotalprice = driver.findElement(By.xpath("//table[@id='shopping-cart-totals-table']/tfoot/tr/td[2]/span")).getText();	//应用优惠券前总计（不含运费）价格 
+			System.out.println("beforetotalprice is :" + beforetotalprice);
+			//判断小计价格是否与总计价格相等，出现异常截图
+			if (beforetotalprice.equals(subtotalprice)) {
+				System.out.println("the sub total price is right");
+			} else {
+				Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_EditShippingCart_subtotalprice.png");
+				driver.quit();
+			}
+			Thread.sleep(3000);// 休眠3秒
+			driver.findElement(By.id("coupon_code")).sendKeys("M47U0O0HUIAS");//输入优惠代码
+			Thread.sleep(3000);// 休眠3秒
+			driver.findElement(By.cssSelector("div.discount-form > div.actions > button.button")).click();// 点击应用优惠券
+			Thread.sleep(3000);// 休眠3秒
+			
+			
+			// --------------------------比较应用优惠券后的价格--------------------------//	
+			String couponprice = driver.findElement(By.xpath("//table[@id='shopping-cart-totals-table']/tbody/tr[2]/td/span")).getText();// 优惠券价格
+			System.out.println("couponprice is :" + couponprice);
+			String totalprice = driver.findElement(By.xpath("//table[@id='shopping-cart-totals-table']/tfoot/tr/td[2]/span")).getText();// 应用优惠券后总计（不含运费）价格
+			System.out.println("totalprice is :" + totalprice);
+			//将string类型转化为double类型
+			double newsubtotalprice = Double.parseDouble(subtotalprice.substring(1, subtotalprice.length() - 1));
+			System.out.println("newsubtotalprice is :" + newsubtotalprice);
+			double newcouponprice = Double.parseDouble(couponprice.substring(2,couponprice.length() - 2));
+			System.out.println("newcouponprice is :" + newcouponprice);
+			double newtotalsprice = Double.parseDouble(totalprice.substring(1,totalprice.length() - 1));
+			System.out.println("newtotalsprice is :" + newtotalsprice);
+			//判断应用优惠券后价格是否正确，出现异常截图
+			if ((newsubtotalprice - newcouponprice) == newtotalsprice) {
+				System.out.println("the totals price is right");
+			} else {
+				Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_EditShippingCart_totalsprice.png");
+				driver.quit();
+			}
+			Thread.sleep(3000);// 休眠3秒
+			driver.findElement(By.xpath("(//li/button)")).click();// 点击去结算
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_EditShippingCart.png");
+			driver.quit();
+			throw new Exception();
+		}
+	}
+	
+	//注册新用户 ，取消优惠券，出现异常截图
+	public static void registernewcustomer(String useradd, String userpassword)
+			throws Exception {
+		try {
+			// 注册新用户
+			driver.findElement(By.xpath("//button[@type='button']")).click();
+			// 注册邮箱
+			driver.findElement(By.id("email_address")).sendKeys(useradd);
+			// 重复邮箱
+			driver.findElement(By.id("confirmation-email")).sendKeys(useradd);
+			// 输入密码
+			driver.findElement(By.id("password")).sendKeys(userpassword);
+			// 重复密码
+			driver.findElement(By.id("confirmation")).sendKeys(userpassword);
+			// 同意并注册
+			driver.findElement(By.cssSelector("button.button.btn-blue")).click();
+			// 点击取消优惠券
+			driver.findElement(By.xpath("//button[@value='取消优惠券']")).click();
+			// 点击去结算
+			driver.findElement(By.xpath("(//button[@type='button'])[8]")).click();
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_RegisterNewCustomer.png");
+			driver.quit();
+			throw new Exception();
+		}
+		Thread.sleep(2000);
+
+	}
+	//新用户填写收件地址，出现异常截图
+	public static void fillinformation() throws Exception {
+		try {
+			driver.findElement(By.id("billing:nickname")).sendKeys("张三");//填写姓名
+			new Select(driver.findElement(By.id("billing:region_id"))).selectByVisibleText("北京");//选择地区，州或省
+			new Select(driver.findElement(By.id("billing:city_id"))).selectByVisibleText("北京");//选择城市
+			new Select(driver.findElement(By.id("billing:district_id"))).selectByVisibleText("东城区");//选择区县
+			driver.findElement(By.id("billing:postcode")).sendKeys("200000");// 邮件编码
+			driver.findElement(By.id("billing:street1")).sendKeys("人民路1弄1号");// 地址	
+			driver.findElement(By.id("billing:telephone")).sendKeys("13988988998");// 手机号码
+			driver.findElement(By.id("checkout-save-addr")).click();// 保存
+			Thread.sleep(3000);// 休眠3秒
+			// 收货信息填写完成功，下一步
+			Actions newaction = new Actions(driver);
+			newaction.click(driver.findElement(By.xpath("//button[@id='checkout-save-shipping']"))).perform();//点击下一步
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,
+					"NewCustomer_FillInformation.png");
+			driver.quit();
+			throw new Exception();
+		}
+		Thread.sleep(3000);// 休眠3秒
+	}
+	//选择物流方式，出现异常截图
+	public static void shippingmethod() throws Exception {
+		try {
+			/*-------------------------以下是物流信息部分-------------------------*/
+			Thread.sleep(3000);// 休眠3秒
+			driver.findElement(By.id("s_method_yuantong_yuantong")).click();// 选择圆通速递
+			driver.findElement(By.cssSelector("#shipping-method-buttons-container > button.button")).click();// 物流信息填写完成，下一步
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,
+					"NewCustomer_ShippingMethod.png");
+			driver.quit();
+			throw new Exception();
+		}
+	}
+	//选择支付信息及发票 ，出现异常截图
+	public static void fapiao() throws Exception {
+		try {
+			/*-------------------------以下是支付信息部分-------------------------*/
+			driver.findElement(By.id("input-radio-normal")).click();
+			driver.findElement(By.xpath("//div[@id='fapiao-selection-wrapper']/ul/li[2]/label")).click();// 选择普通发票
+			new Select(driver.findElement(By.id("fapiao-normal"))).selectByVisibleText("服装");//发票内容为服装
+			// 支付信息填写完成，下一步
+			driver.findElement(By.cssSelector("#payment-buttons-container > button.button")).click();//点击下一步
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,
+					"NewCustomer_FaPiao.png");
+			driver.quit();
+			throw new Exception();
+		}
+		Thread.sleep(2000);
+	}
+	//最后核对价格，点击提交订单，出现异常截图
+	public static void checkout() throws InterruptedException {
+		try {
+			// --------------------------核对应付总额的价格--------------------------//
+			// 确认购物清单中的商品小计
+			String finaltotalprice = driver.findElement(By.xpath("//table[@id='checkout-totals']/tbody/tr[1]/td/span[1]/span")).getText();
+			System.out.println("finaltotalprice:" + finaltotalprice);
+			// 确认购物清单中的运费价格
+			String finaldeliveryprice = driver.findElement(By.xpath("//table[@id='checkout-totals']/tbody/tr[1]/td/span[3]/span/span")).getText();
+			System.out.println("finaldeliveryprice:" + finaldeliveryprice);
+			// 确认购物清单中的应付总额
+			String finalprice = driver.findElement(By.xpath("//table[@id='checkout-totals']/tbody/tr[3]/td[2]/div[2]/span")).getText();
+			System.out.println("finalprice:" + finalprice);
+			// 将string类型转化为double类型
+			double newfinaltotalprice = Double.parseDouble(finaltotalprice.substring(1, finaltotalprice.length() - 1));
+			System.out.println("newfinaltotalprice:" + newfinaltotalprice);
+			double newfinaldeliveryprice = Double.parseDouble(finaldeliveryprice.substring(1,finaldeliveryprice.length() - 1));
+			System.out.println("newfinaldeliveryprice:" + newfinaldeliveryprice);
+			double newfinalprice = Double.parseDouble(finalprice.substring(1,finalprice.length() - 1));
+			System.out.println("newfinalprice:" + newfinalprice);
+			//判断商品小计加运费的价格是否等于应付总额，出现异常截图
+			if ((newfinaltotalprice + newfinaldeliveryprice) == newfinalprice) {
+				System.out.println("the final totals price is right");
+			} else {
+				Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_EditShippingCart_finaltotalsprice.png");
+				driver.quit();
+			}
+			/*-------------------------以下是确认购物清单部分-------------------------*/
+			Actions theaction = new Actions(driver);
+			theaction.click(driver.findElement(By.id("checkout-place-order"))).perform();// 点击提交订单
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_CheckOut.png");
+			driver.quit();
+		}
+		Thread.sleep(3000);//休眠3秒
+	}
+	//选择银联在线支付，出现异常截图
+	public static void payment() throws Exception {
+		try {
+			driver.findElement(By.id("opt-chinapay")).click();// 选择在线支付
+		} catch (Exception e) {
+			Screenshot.snapshot((TakesScreenshot) driver,"NewCustomer_PayMent.png");
+			driver.quit();
+			throw new Exception();
+		}
+		Thread.sleep(3000);//休眠3秒
+	}
+	//退出浏览区
+	public static void closebrowser() {
+		driver.quit();
+	}
+}

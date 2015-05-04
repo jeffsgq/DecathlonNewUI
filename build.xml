@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="DECATHLON" basedir=".">
+	<target name="select">
+		<echo message="ant 1 : NewCustomer and pay online" />
+		<echo message="ant 2 : ReturnCustomer and pay cash on delivery" />
+		<echo message="ant 3 : Test Started" />
+		<echo message="ant all : ALL" />
+		<echo message="ant email : send auto email"/>
+	</target>
+	
+	<taskdef name="testng" classname="org.testng.TestNGAntTask">
+		<classpath>
+			<pathelement location="lib/testng-6.8.6beta.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<property name="testoutputdir-hk" location="test-output"/>
+	<property name="srcdir" location="src"/>
+	<property name="libdir" value="lib"/>
+	<property name="full-compile" value="true"/>
+
+	<path id="classpath.base"/>
+	<path id="classpath-hk">
+		<pathelement location="${srcdir}"/>
+		<pathelement location="${testoutputdir-hk}"/>
+		<fileset dir="${libdir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<path refid="classpath.base"/>
+	</path>
+	<path id="classes">
+		<pathelement location="${basedir}/bin/"/>
+		<fileset dir="${libdir}" includes="*jar" />
+	</path>
+	
+	<target name="clean">
+		<delete verbose="${full-compile}">
+			<fileset dir="${testoutputdir-hk}" includes="**/*.class" />
+		</delete>
+	</target>
+	
+	<target name="compile" depends="clean">
+		<javac srcdir="${srcdir}" destdir="${testoutputdir-hk}"
+			verbose="${full-compile}"
+			classpathref="classes" includeantruntime="on" encoding="utf-8"/>
+	</target>
+	
+	<!--Man NewCustomer-->
+	<target name="runtest1" depends="compile">
+		<testng outputdir="${testoutputdir-hk}" classpathref="classpath-hk">
+			<xmlfileset dir="${srcdir}" includes="testng_nc.xml" />
+		</testng>
+	</target>
+	<target name="1" depends="runtest1">
+		<xslt in="${testoutputdir-hk}/testng-results.xml"
+					style="${testoutputdir-hk}/testng-results.xsl" 
+					out="${testoutputdir-hk}/Index_Report.html">
+			<param name="testNgXslt.outputDir" 
+						expression="${testoutputdir-hk}/"/>
+			<classpath refid="classpath-hk"/>
+		</xslt>
+	</target>
+	
+	<!--Women ReturnCustomer-->
+	<target name="runtest2" depends="compile">
+		<testng outputdir="${testoutputdir-hk}" classpathref="classpath-hk">
+			<xmlfileset dir="${srcdir}" includes="testng_rc.xml" />
+		</testng>
+	</target>
+	<target name="2" depends="runtest2">
+		<xslt in="${testoutputdir-hk}/testng-results.xml"
+					style="${testoutputdir-hk}/testng-results.xsl" 
+					out="${testoutputdir-hk}/Index_Report.html">
+			<param name="testNgXslt.outputDir" 
+						expression="${testoutputdir-hk}/"/>
+			<classpath refid="classpath-hk"/>
+		</xslt>
+	</target>
+	
+	<!--Test Started-->
+		<target name="runtest3" depends="compile">
+			<testng outputdir="${testoutputdir-hk}" classpathref="classpath-hk">
+				<xmlfileset dir="${srcdir}" includes="testng_Started.xml" />
+			</testng>
+		</target>
+		<target name="3" depends="runtest3">
+			<xslt in="${testoutputdir-hk}/testng-results.xml"
+						style="${testoutputdir-hk}/testng-results.xsl" 
+						out="${testoutputdir-hk}/Index_Report.html">
+				<param name="testNgXslt.outputDir" 
+							expression="${testoutputdir-hk}/"/>
+				<classpath refid="classpath-hk"/>
+			</xslt>
+		</target>
+	
+	<!--All Customer-->
+	<target name="runtest4" depends="compile">
+		<testng outputdir="${testoutputdir-hk}" classpathref="classpath-hk">
+			<xmlfileset dir="${srcdir}" includes="testng_all.xml" />
+		</testng>
+	</target>
+
+	<target name="all" depends="runtest4">
+		<xslt in="${testoutputdir-hk}/testng-results.xml" 
+			style="${testoutputdir-hk}/testng-results.xsl" 
+			out="${testoutputdir-hk}/Index_Report.html">
+			<param name="testNgXslt.outputDir" expression="${testoutputdir-hk}/" />
+			<classpath refid="classpath-hk" />
+		</xslt>
+	</target>
+	
+	
+	<!--Send Email-->
+	<target name="email" depends="compile">
+        <java dir="${testoutputdir-hk}" classname="sendmail.Test_Email">
+            <classpath refid="classpath-hk"/>
+        	</java>
+	</target>
+	
+</project>

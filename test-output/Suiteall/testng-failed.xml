@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Suiteall]">
+  <test name="testall(failed)">
+    <classes>
+      <class name="testhk.TestCase_man_NewCustomer_HK">
+        <methods>
+          <include name="TestNewCustomerHK"/>
+        </methods>
+      </class> <!-- testhk.TestCase_man_NewCustomer_HK -->
+      <class name="testhk.TestCase_women_ReturnCustomer_HK">
+        <methods>
+          <include name="TestReturnCustomerHK"/>
+        </methods>
+      </class> <!-- testhk.TestCase_women_ReturnCustomer_HK -->
+    </classes>
+  </test> <!-- testall(failed) -->
+</suite> <!-- Failed suite [Suiteall] -->

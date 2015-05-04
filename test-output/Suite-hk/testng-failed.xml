@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Suite-hk]">
+  <test name="test-hk(failed)">
+    <classes>
+      <class name="returncustomerhk.ReturnCustomerTestHK">
+        <methods>
+          <include name="TestReturnCustomerHK"/>
+        </methods>
+      </class> <!-- returncustomerhk.ReturnCustomerTestHK -->
+    </classes>
+  </test> <!-- test-hk(failed) -->
+</suite> <!-- Failed suite [Suite-hk] -->

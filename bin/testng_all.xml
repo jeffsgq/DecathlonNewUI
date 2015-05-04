@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Suiteall" parallel="false">
+  <test name="testall">
+    <classes>	<!-- 执行所有 -->
+    	<class name="test.TestCase_man_NewCustomer"/>
+      	<class name="test.TestCase_women_ReturnCustomer"/>
+    </classes>
+  </test> 
+</suite> 

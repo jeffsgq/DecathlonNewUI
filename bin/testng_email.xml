@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Suiteemail" parallel="false">
+  <test name="email">
+    <classes>	<!-- 执行发送邮件 -->
+    	<class name="sendmail.Test_Email"/>
+    </classes>
+  </test> 
+</suite> 
